@@ -1,0 +1,46 @@
+###README###
+
+The files that are relevant to you are titles.txt, paths.txt, and bitrates.txt.
+    * titles.txt contains all of the titles to be used for the new file names.
+    * paths.txt contains all of the file paths for each file in the same order 
+    as titles.txt so that the python script rename.py doesn't rename the wrong 
+    file
+    * bitrates contains the filename of the newly renamed file and the bitrates
+    of those files. Bitrates are even rows of the file and file paths are odd 
+    rows of the file, e.g. row 0: "128 kb/s" and row 1: "path/to/file".
+
+To generate the titles.txt file, use the command 'yt-dlp -i (youtube playlist
+link) -N 16 -x' to download the music files, and then move them to the opus 
+folder with 'mv *.opus opus'. Next run the command 'ls opus > titles.txt'.
+
+After the titles.txt file is generated, it is time to run the command to get the
+paths.txt file. Use the command 'for i in opus/*; realpath $i > paths.txt'.
+
+Now that you have both of those files completed, it is time to edit all of those 
+titles to make them nice and uniform, and then you can run the rename.py 
+program.
+
+After that comes the most difficult part of this program. It really isn't hard
+but whatever. We need to get the bitrate of each file and the path of the file,
+and store them in the bitrates.txt file. To do so, use 
+'for i in opus/*; do; mediainfo $i | grep bit >> bitrates.txt; 
+realpath $i >> bitrates.txt; done;'. This should do the job. Next up is running 
+the ffmpeg.py program that will translate each opus file into an mp3 file using 
+ffmpeg. This will make them all at the base folder, so you're going to have to 
+move those suckers back into the mp3 folder.
+
+After that, you should be all set. Just run the 'make clean' command and it 
+should be all set.
+
+
+
+###Makefile guide###
+To make things simpler, run these scripts in the order of the makefile.
+To get started, run "make download link='(link to video)'". This will
+download all of the music files. From there, move to "make rename", and 
+finally "make bitrates".
+
+
+###Help###
+Use this command for moving from m4a to opus:
+ffmpeg -i (input file) -c libopus -b:a (bitrate) (output file)
